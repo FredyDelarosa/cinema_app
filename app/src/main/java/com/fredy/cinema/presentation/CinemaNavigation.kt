@@ -6,12 +6,14 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.fredy.cinema.presentation.rooms.CreateRoomScreen
 import com.fredy.cinema.presentation.rooms.RoomsListScreen
 import com.fredy.cinema.presentation.seats.SeatsScreen
 import com.fredy.cinema.presentation.settings.SettingsScreen
 
 sealed class Screen(val route: String) {
     object RoomsList : Screen("rooms_list")
+    object CreateRoom : Screen("create_room")
     object RoomDetail : Screen("room_detail/{roomId}") {
         fun createRoute(roomId: String) = "room_detail/$roomId"
     }
@@ -31,6 +33,21 @@ fun CinemaNavigation(navController: NavHostController) {
                 },
                 onSettingsClick = {
                     navController.navigate(Screen.Settings.route)
+                },
+                onCreateRoomClick = {
+                    navController.navigate(Screen.CreateRoom.route)
+                }
+            )
+        }
+        composable(Screen.CreateRoom.route) {
+            CreateRoomScreen(
+                onRoomCreated = { roomId ->
+                    navController.navigate(Screen.RoomDetail.createRoute(roomId)) {
+                        popUpTo(Screen.RoomsList.route)
+                    }
+                },
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }

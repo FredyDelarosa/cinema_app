@@ -28,6 +28,9 @@ class SeatsViewModel @Inject constructor(
     private val _error = MutableSharedFlow<String>()
     val error = _error.asSharedFlow()
 
+    private val _loadingSeats = MutableStateFlow<Set<String>>(emptySet())
+    val loadingSeats: StateFlow<Set<String>> = _loadingSeats.asStateFlow()
+
     val seats: StateFlow<List<Seat>> = getSeatsUseCase.observeSeats(roomId)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -42,16 +45,22 @@ class SeatsViewModel @Inject constructor(
     }
 
     fun onSeatClick(seat: Seat) {
+        if (_loadingSeats.value.contains(seat.id)) return
+
         viewModelScope.launch {
-            if (seat.isSelectedBy(userId)) {
-                releaseSeatUseCase(seat.id, userId, roomId).onFailure {
-                    _error.emit(it.message ?: "Error releasing seat")
-                }
+            _loadingSeats.update { it + seat.id }
+            val result = if (seat.isSelectedBy(userId)) {
+                releaseSeatUseCase(seat.id, userId, roomId)
             } else if (seat.isAvailable()) {
-                selectSeatUseCase(seat.id, userId, roomId).onFailure {
-                    _error.emit(it.message ?: "Error selecting seat")
-                }
+                selectSeatUseCase(seat.id, userId, roomId)
+            } else {
+                Result.success(Unit)
             }
+            
+            result.onFailure {
+                _error.emit(it.message ?: "Error processing seat")
+            }
+            _loadingSeats.update { it - seat.id }
         }
     }
 }
