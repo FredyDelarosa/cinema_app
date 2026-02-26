@@ -35,6 +35,7 @@ fun SeatsScreen(
     val loadingSeats by viewModel.loadingSeats.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     var showConfirmationDialog by remember { mutableStateOf(false) }
+    var showReleaseDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.error.collectLatest { message ->
@@ -55,6 +56,19 @@ fun SeatsScreen(
         )
     }
 
+    if (showReleaseDialog) {
+        AlertDialog(
+            onDismissRequest = { showReleaseDialog = false },
+            title = { Text("Asiento Liberado") },
+            text = { Text("Has quitado la selección de tus asientos correctamente.") },
+            confirmButton = {
+                TextButton(onClick = { showReleaseDialog = false }) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
+
     SeatsContent(
         seats = seats,
         loadingSeats = loadingSeats,
@@ -64,6 +78,9 @@ fun SeatsScreen(
         onSeatClick = { viewModel.onSeatClick(it) },
         onConfirmClick = {
             showConfirmationDialog = true
+        },
+        onReleaseClick = {
+            showReleaseDialog = true
         }
     )
 }
@@ -77,7 +94,8 @@ fun SeatsContent(
     snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onSeatClick: (Seat) -> Unit,
-    onConfirmClick: () -> Unit
+    onConfirmClick: () -> Unit,
+    onReleaseClick: () -> Unit
 ) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -156,10 +174,21 @@ fun SeatsContent(
                 onClick = onConfirmClick,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 16.dp),
+                    .padding(bottom = 8.dp),
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text("Confirmar selección", modifier = Modifier.padding(8.dp))
+            }
+
+            OutlinedButton(
+                onClick = onReleaseClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                shape = MaterialTheme.shapes.medium,
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text("Quitar selección", modifier = Modifier.padding(8.dp))
             }
         }
     }
@@ -261,7 +290,8 @@ fun SeatsPreview() {
             snackbarHostState = remember { SnackbarHostState() },
             onBackClick = {},
             onSeatClick = {},
-            onConfirmClick = {}
+            onConfirmClick = {},
+            onReleaseClick = {}
         )
     }
 }
