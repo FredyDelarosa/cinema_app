@@ -11,6 +11,9 @@ interface CinemaApi {
     @GET("rooms/{roomId}")
     suspend fun getRoomById(@Path("roomId") roomId: String): RoomDto
 
+    @POST("rooms")
+    suspend fun createRoom(@Body request: CreateRoomRequest): CreateRoomResponse
+
     @GET("rooms/{roomId}/seats")
     suspend fun getSeatsByRoom(@Path("roomId") roomId: String): SeatsResponse
 
