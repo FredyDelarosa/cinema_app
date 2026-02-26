@@ -34,11 +34,25 @@ fun SeatsScreen(
     val seats by viewModel.seats.collectAsState()
     val loadingSeats by viewModel.loadingSeats.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var showConfirmationDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.error.collectLatest { message ->
             snackbarHostState.showSnackbar(message)
         }
+    }
+
+    if (showConfirmationDialog) {
+        AlertDialog(
+            onDismissRequest = { showConfirmationDialog = false },
+            title = { Text("¡Éxito!") },
+            text = { Text("Tus asientos han sido apartados correctamente.") },
+            confirmButton = {
+                TextButton(onClick = { showConfirmationDialog = false }) {
+                    Text("Aceptar")
+                }
+            }
+        )
     }
 
     SeatsContent(
@@ -49,7 +63,7 @@ fun SeatsScreen(
         onBackClick = onBackClick,
         onSeatClick = { viewModel.onSeatClick(it) },
         onConfirmClick = {
-            // Se queda en la misma pantalla por petición del usuario
+            showConfirmationDialog = true
         }
     )
 }
