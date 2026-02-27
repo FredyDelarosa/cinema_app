@@ -42,8 +42,7 @@ object NetworkModule {
     @Singleton
     @CinemaApiUrl
     fun provideBaseUrl(): String {
-        return "http://10.0.2.2:8080/api/v1/"
-        // return "http://192.168.1.x:8080/api/v1/" // Dispositivo físico
+        return "https://cinema.upprojects.online/api/v1/"
     }
 
     @Provides

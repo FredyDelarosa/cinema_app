@@ -1,19 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.secrets.gradle)
     alias(libs.plugins.jetbrainsKotlinSerialization)
-    alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.hilt.android)
+    alias(libs.plugins.devtools.ksp)
 }
 
 android {
     namespace = "com.fredy.cinema"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.fredy.cinema"
@@ -35,8 +32,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
     buildFeatures {
         compose = true
@@ -78,21 +75,23 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
 
-    implementation(libs.androidx.compose.ui.text.google.fonts)      // G Fonts
-    implementation(libs.androidx.lifecycle.viewmodel.compose)       // viewModel()
-    implementation(libs.com.squareup.retrofit2.retrofit)            // Retrofit
-    implementation(libs.com.squareup.retrofit2.converter.json)      // JSON
-    implementation(libs.com.squareup.okhttp3.okhttp)                // OkHttp
-    implementation(libs.com.squareup.okhttp3.logging.interceptor)   // Logging Interceptor
-    implementation(libs.io.coil.kt.coil.compose)                    // Coil
-    implementation(libs.androidx.navigation.compose)                // Navigation
-    implementation(libs.androidx.compose.material.icons.extended)   // Icons extendend
-    implementation(libs.hilt.android)                               // Implementación de Hilt
-    implementation(libs.hilt.navigation.compose)                    // Integración con Jetpack Compose
-    ksp(libs.hilt.compiler)                                         // KSP
+    implementation(libs.androidx.compose.ui.text.google.fonts)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.com.squareup.retrofit2.retrofit)
+    implementation(libs.com.squareup.retrofit2.converter.json)
+    implementation(libs.com.squareup.okhttp3.okhttp)
+    implementation(libs.com.squareup.okhttp3.logging.interceptor)
+    implementation(libs.io.coil.kt.coil.compose)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.compose.material.icons.extended)
+    
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+    implementation(libs.hilt.navigation.compose)
+
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
-
+    ksp(libs.androidx.room.compiler)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
